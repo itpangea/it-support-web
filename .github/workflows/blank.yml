@@ -1,0 +1,26 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - Develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t it-support-web .
+
+      - name: Run tests
+        run: docker run it-support-web npm run test
+
+      - name: Deploy with Docker
+        run: |
+          docker stop it-support-web || true
+          docker rm it-support-web || true
+          docker run -d --name it-support-web -p 80:80 it-support-web
