@@ -1,13 +1,1 @@
-{
-    "name": "it-support-web",
-    "version": "1.0.0",
-    "description": "Proyecto it-support-web",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "dependencies": {
-      "express": "^4.17.1",
-      "mysql2": "^2.2.5"
-    }
-  }  
+{ "name": "it-support-web", "version": "1.0.0", "main": "server.js" }

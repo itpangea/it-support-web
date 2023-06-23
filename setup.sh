@@ -23,6 +23,19 @@ function install_docker() {
     fi
 }
 
+# Instalar Docker Compose
+function install_docker_compose() {
+    # Verificar si Docker Compose está instalado
+    if ! command -v docker-compose &> /dev/null; then
+        echo "Instalando Docker Compose..."
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        echo "Docker Compose instalado correctamente."
+    else
+        echo "Docker Compose ya está instalado."
+    fi
+}
+
 # Configurar permisos de usuario para Docker
 function configure_docker_permissions() {
     echo "Configurando permisos de usuario para Docker..."
@@ -37,25 +50,11 @@ function install_npm_dependencies() {
     echo "Dependencias de npm instaladas correctamente."
 }
 
-# Crear archivo package.json y carpeta /app
-function create_package_json() {
-    echo "Creando archivo package.json y carpeta /app..."
-    echo '{ "name": "it-support-web", "version": "1.0.0", "main": "server.js" }' > package.json
-    mkdir app
-    echo "Archivo package.json y carpeta /app creados correctamente."
-}
-
-# Ejecutar el proceso de creación del contenedor
-function create_container() {
-    echo "Creando contenedor de it-support-web..."
+# Ejecutar el proyecto it-support-web
+function run_it_support_web() {
+    echo "Ejecutando it-support-web..."
     docker-compose up -d
-    echo "Contenedor creado correctamente."
-}
-
-# Obtener la dirección IP del contenedor
-function get_container_ip() {
-    local container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' it-support-web_app)
-    echo "Puede acceder al proyecto it-support-web en el siguiente enlace: http://$container_ip"
+    echo "it-support-web ejecutado correctamente."
 }
 
 # Menú principal
@@ -65,49 +64,43 @@ function main_menu() {
     echo ""
     echo "Seleccione una opción:"
     echo "1. Instalar Docker"
-    echo "2. Configurar permisos de usuario para Docker"
-    echo "3. Instalar dependencias de npm"
-    echo "4. Crear archivo package.json y carpeta /app"
-    echo "5. Ejecutar el proceso de creación del contenedor"
-    echo "6. Obtener la dirección IP del contenedor"
-    echo "7. Salir"
+    echo "2. Instalar Docker Compose"
+    echo "3. Configurar permisos de usuario para Docker"
+    echo "4. Instalar dependencias de npm"
+    echo "5. Ejecutar it-support-web"
+    echo "6. Salir"
     echo ""
 
     while true; do
-        read -p "Ingrese su elección [1-7]: " choice
+        read -p "Ingrese su elección [1-6]: " choice
 
         case $choice in
             1)
                 install_docker
-                show_progress 1 7
+                show_progress 1 6
                 sleep 1
                 ;;
             2)
-                configure_docker_permissions
-                show_progress 2 7
+                install_docker_compose
+                show_progress 2 6
                 sleep 1
                 ;;
             3)
-                install_npm_dependencies
-                show_progress 3 7
+                configure_docker_permissions
+                show_progress 3 6
                 sleep 1
                 ;;
             4)
-                create_package_json
-                show_progress 4 7
+                install_npm_dependencies
+                show_progress 4 6
                 sleep 1
                 ;;
             5)
-                create_container
-                show_progress 5 7
+                run_it_support_web
+                show_progress 5 6
                 sleep 1
                 ;;
             6)
-                get_container_ip
-                show_progress 6 7
-                sleep 1
-                ;;
-            7)
                 echo "Saliendo..."
                 exit 0
                 ;;
@@ -116,7 +109,7 @@ function main_menu() {
                 ;;
         esac
 
-        show_progress 0 7
+        show_progress 0 6
         echo ""
     done
 }
