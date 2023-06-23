@@ -1,19 +1,27 @@
 version: '3'
 services:
-  app:
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: your_password
+      MYSQL_DATABASE: it_support
+      MYSQL_USER: your_user
+      MYSQL_PASSWORD: your_password
+
+  node:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '8080:3000'
+      - '3000:3000'
     depends_on:
       - mysql
-  mysql:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: it_support_web
-    volumes:
-      - mysql-data:/var/lib/mysql
-volumes:
-  mysql-data:
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - '80:80'
+    depends_on:
+      - node

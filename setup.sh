@@ -37,12 +37,25 @@ function install_npm_dependencies() {
     echo "Dependencias de npm instaladas correctamente."
 }
 
-# Ejecutar el proyecto it-support-web
-function run_it_support_web() {
-    echo "Ejecutando it-support-web..."
-    docker build -t it-support-app .
-    docker run -d --name app-container -p 80:80 --link mysql-container:mysql it-support-app
-    echo "it-support-web ejecutado correctamente."
+# Crear archivo package.json y carpeta /app
+function create_package_json() {
+    echo "Creando archivo package.json y carpeta /app..."
+    echo '{ "name": "it-support-web", "version": "1.0.0", "main": "server.js" }' > package.json
+    mkdir app
+    echo "Archivo package.json y carpeta /app creados correctamente."
+}
+
+# Ejecutar el proceso de creación del contenedor
+function create_container() {
+    echo "Creando contenedor de it-support-web..."
+    docker-compose up -d
+    echo "Contenedor creado correctamente."
+}
+
+# Obtener la dirección IP del contenedor
+function get_container_ip() {
+    local container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' it-support-web_app)
+    echo "Puede acceder al proyecto it-support-web en el siguiente enlace: http://$container_ip"
 }
 
 # Menú principal
@@ -54,35 +67,47 @@ function main_menu() {
     echo "1. Instalar Docker"
     echo "2. Configurar permisos de usuario para Docker"
     echo "3. Instalar dependencias de npm"
-    echo "4. Ejecutar it-support-web"
-    echo "5. Salir"
+    echo "4. Crear archivo package.json y carpeta /app"
+    echo "5. Ejecutar el proceso de creación del contenedor"
+    echo "6. Obtener la dirección IP del contenedor"
+    echo "7. Salir"
     echo ""
 
     while true; do
-        read -p "Ingrese su elección [1-5]: " choice
+        read -p "Ingrese su elección [1-7]: " choice
 
         case $choice in
             1)
                 install_docker
-                show_progress 1 5
+                show_progress 1 7
                 sleep 1
                 ;;
             2)
                 configure_docker_permissions
-                show_progress 2 5
+                show_progress 2 7
                 sleep 1
                 ;;
             3)
                 install_npm_dependencies
-                show_progress 3 5
+                show_progress 3 7
                 sleep 1
                 ;;
             4)
-                run_it_support_web
-                show_progress 4 5
+                create_package_json
+                show_progress 4 7
                 sleep 1
                 ;;
             5)
+                create_container
+                show_progress 5 7
+                sleep 1
+                ;;
+            6)
+                get_container_ip
+                show_progress 6 7
+                sleep 1
+                ;;
+            7)
                 echo "Saliendo..."
                 exit 0
                 ;;
@@ -91,7 +116,7 @@ function main_menu() {
                 ;;
         esac
 
-        show_progress 0 5
+        show_progress 0 7
         echo ""
     done
 }
