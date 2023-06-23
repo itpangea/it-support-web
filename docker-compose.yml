@@ -4,10 +4,10 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: your_password
-      MYSQL_DATABASE: it_support
-      MYSQL_USER: your_user
-      MYSQL_PASSWORD: your_password
+      MYSQL_ROOT_PASSWORD: 123456789
+      MYSQL_DATABASE: it_web
+      MYSQL_USER: hku
+      MYSQL_PASSWORD: 123456789
 
   node:
     build:
